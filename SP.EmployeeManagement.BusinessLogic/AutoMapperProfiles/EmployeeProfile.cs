@@ -8,9 +8,7 @@ namespace SP.EmployeeManagement.BusinessLogic.AutoMapperProfiles
     {
         public EmployeeProfile()
         {
-            CreateMap<Employee, EmployeeDto>()
-                .ForMember(dest => dest.DepartmentName, opt => opt.MapFrom(src => src.Department.Name))
-                .ForMember(dest => dest.PositionName, opt => opt.MapFrom(src => src.Position.Title));
+            CreateMap<Employee, EmployeeDto>().ReverseMap();
         }
     }
 }

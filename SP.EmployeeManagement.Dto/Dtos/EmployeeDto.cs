@@ -10,9 +10,5 @@
         public int DepartmentId { get; set; }
         public int PositionId { get; set; }
         public decimal Salary { get; set; }
-        public DateTime HireDate { get; set; }
-
-        public string? DepartmentName { get; set; }
-        public string? PositionName { get; set; }
     }
 }

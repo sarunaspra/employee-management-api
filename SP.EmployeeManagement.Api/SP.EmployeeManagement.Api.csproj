@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SP.EmployeeManagement.DataAccess\SP.EmployeeManagement.DataAccess.csproj" />
+    <ProjectReference Include="..\SP.EmployeeManagement.BusinessLogic\SP.EmployeeManagement.BusinessLogic.csproj" />
   </ItemGroup>
 
 </Project>

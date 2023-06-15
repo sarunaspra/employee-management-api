@@ -7,7 +7,7 @@ namespace SP.EmployeeManagement.DataAccess
 {
     public class EmployeeManagementContext : DbContext
     {
-        public EmployeeManagementContext(DbContextOptions<EmployeeManagementContext> options) : base(options) 
+        public EmployeeManagementContext(DbContextOptions options) : base(options) 
         {
         }
 
