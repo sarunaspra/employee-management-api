@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SP.EmployeeManagement.BusinessLogic.Services.IServices;
+using SP.EmployeeManagement.BusinessLogic.Utilities.CustomExceptions;
 using SP.EmployeeManagement.Dto.Dtos;
 
 namespace SP.EmployeeManagement.Api.Controllers
@@ -15,43 +16,120 @@ namespace SP.EmployeeManagement.Api.Controllers
             _employeeService = employeeService;
         }
 
+        /// <summary>
+        /// Creates a new employee
+        /// </summary>
+        /// <param name="employee">Employee request data</param>
         [HttpPost]
-        public async Task<IActionResult> Create(EmployeeDto employee)
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> CreateEmployeeAsync(EmployeeDto employee)
         {
-            await _employeeService.CreateEmployee(employee);
-
-            return Ok();
+            try
+            {
+                await _employeeService.CreateEmployeeAsync(employee);
+                
+                return CreatedAtAction(nameof(GetEmployeeById), new {id = employee.Id}, employee);
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred.");
+            }
         }
 
+        /// <summary>
+        /// Deletes an employee
+        /// </summary>
+        /// <param name="employeeId">Employee id</param>
         [HttpDelete]
-        public async Task<IActionResult> Delete(int employeeId)
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> DeleteEmployeeAsync(int employeeId)
         {
-            await _employeeService.DeleteEmployee(employeeId);
-
-            return Ok();
+            try
+            {
+                await _employeeService.DeleteEmployeeAsync(employeeId);
+                return NoContent();
+            }
+            catch (UserNotFoundException)
+            {
+                return NotFound();
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred.");
+            }
         }
 
+        /// <summary>
+        /// Returns one employee by id
+        /// </summary>
+        /// <param name="id">Employee id</param>
         [HttpGet]
         [Route("/{id:int}")]
+        [ProducesResponseType(typeof(EmployeeDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetEmployeeById(int id)
         {
-            return Ok(await _employeeService.GetEmployeeById(id));
+            try
+            {
+                return Ok(await _employeeService.GetEmployeeByIdAsync(id));
+            }
+            catch (UserNotFoundException)
+            {
+                return NotFound();
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred.");
+            }
         }
 
+        /// <summary>
+        /// Returns all employees
+        /// </summary>
         [HttpGet]
         [Route("/GetAll")]
-        public async Task<IActionResult> GetEmployeeList()
+        [ProducesResponseType(typeof(List<EmployeeDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetEmployeesAsync()
         {
-            var users = await _employeeService.GetAllEmployees();
-            return Ok(users);
+            try
+            {
+                return Ok(await _employeeService.GetAllEmployeesAsync());
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred.");
+            }
         }
 
+        /// <summary>
+        /// Updates data of already existing employee
+        /// </summary>
+        /// <param name="employee">Employee request data</param>
         [HttpPut]
-        public async Task<IActionResult> Update(EmployeeDto employee)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> UpdateEmployeeAsync(EmployeeDto employee)
         {
-            await _employeeService.UpdateEmployee(employee);
+            try
+            {
+                await _employeeService.UpdateEmployeeAsync(employee);
 
-            return Ok();
+                return Ok();
+            }
+            catch (UserNotFoundException)
+            {
+                return NotFound();
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred.");
+            }
         }
     }
 }

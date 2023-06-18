@@ -4,6 +4,6 @@
     {
         IEmployeeRepository EmployeeRepository { get; }
 
-        void SaveChanges();
+        Task Commit();
     }
 }

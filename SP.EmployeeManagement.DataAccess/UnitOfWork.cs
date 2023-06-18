@@ -28,14 +28,14 @@ namespace SP.EmployeeManagement.DataAccess
         public IEmployeeRepository EmployeeRepository => 
             _employeeRepository ??= new EmployeeRepository(Context);
 
-        public void SaveChanges()
+        public async Task Commit()
         {
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
 
-        public void Dispose()
+        public async Task Dispose()
         {
-            _context.Dispose();
+            await _context.DisposeAsync();
         }
     }
 }

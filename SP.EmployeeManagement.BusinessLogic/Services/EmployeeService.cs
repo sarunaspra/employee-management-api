@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using SP.EmployeeManagement.BusinessLogic.Services.IServices;
+using SP.EmployeeManagement.BusinessLogic.Utilities.CustomExceptions;
 using SP.EmployeeManagement.DataAccess.Entities;
 using SP.EmployeeManagement.DataAccess.Interfaces;
 using SP.EmployeeManagement.Dto.Dtos;
@@ -18,45 +19,58 @@ namespace SP.EmployeeManagement.BusinessLogic.Services
             _mapper = mapper;
         }
 
-        public async Task CreateEmployee(EmployeeDto employee)
+        public async Task CreateEmployeeAsync(EmployeeDto employeeDto)
         {
-            if (employee is not null)
-            {
-                await _unitOfWork.EmployeeRepository.Add(_mapper.Map<Employee>(employee));
+            await _unitOfWork.EmployeeRepository.Add(_mapper.Map<Employee>(employeeDto));
 
-                _unitOfWork.SaveChanges();
-            }
+            await _unitOfWork.Commit();
         }
 
-        public async Task DeleteEmployee(int employeeId)
+        public async Task DeleteEmployeeAsync(int employeeId)
         {
             var employeeToDelete = await _unitOfWork.EmployeeRepository.GetById(employeeId);
 
+            if (employeeToDelete is null)
+            {
+                throw new UserNotFoundException();
+            }
+
             _unitOfWork.EmployeeRepository.Delete(employeeToDelete);
 
-            _unitOfWork.SaveChanges();
+            await _unitOfWork.Commit();
         }
 
-        public async Task<List<EmployeeDto>> GetAllEmployees()
+        public async Task<List<EmployeeDto>> GetAllEmployeesAsync()
         {
             var employeesList = await _unitOfWork.EmployeeRepository.GetAll();
+
             return _mapper.Map<List<EmployeeDto>>(employeesList);
         }
 
-        public async Task<EmployeeDto> GetEmployeeById(int employeeId)
+        public async Task<EmployeeDto> GetEmployeeByIdAsync(int employeeId)
         {
             var employeeToReturn = await _unitOfWork.EmployeeRepository.GetById(employeeId);
+
+            if (employeeToReturn is null)
+            {
+                throw new UserNotFoundException();
+            }
 
             return _mapper.Map<EmployeeDto>(employeeToReturn);
         }
 
-        public async Task UpdateEmployee(EmployeeDto employeeToUpdateDto)
+        public async Task UpdateEmployeeAsync(EmployeeDto employeeToUpdateDto)
         {
             var employeeToUpdate = _mapper.Map<Employee>(employeeToUpdateDto);
 
+            if (employeeToUpdate is null)
+            {
+                throw new UserNotFoundException();
+            }
+
             _unitOfWork.EmployeeRepository.Update(employeeToUpdate);
 
-            _unitOfWork.SaveChanges();
+            await _unitOfWork.Commit();
         }
     }
 }

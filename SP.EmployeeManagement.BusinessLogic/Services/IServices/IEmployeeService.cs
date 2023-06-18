@@ -4,14 +4,14 @@ namespace SP.EmployeeManagement.BusinessLogic.Services.IServices
 {
     public interface IEmployeeService
     {
-        Task CreateEmployee(EmployeeDto employee);
+        Task CreateEmployeeAsync(EmployeeDto employeeDto);
 
-        Task<List<EmployeeDto>> GetAllEmployees();
+        Task<List<EmployeeDto>> GetAllEmployeesAsync();
 
-        Task<EmployeeDto> GetEmployeeById(int employeeId);
+        Task<EmployeeDto> GetEmployeeByIdAsync(int employeeId);
 
-        Task UpdateEmployee(EmployeeDto employee);
+        Task UpdateEmployeeAsync(EmployeeDto employeeToUpdateDto);
 
-        Task DeleteEmployee(int employeeId);
+        Task DeleteEmployeeAsync(int employeeId);
     }
 }
