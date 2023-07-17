@@ -61,13 +61,15 @@ namespace SP.EmployeeManagement.BusinessLogic.Services
 
         public async Task UpdateEmployeeAsync(EmployeeDto employeeToUpdateDto)
         {
-            var employeeToUpdate = _mapper.Map<Employee>(employeeToUpdateDto);
+            var employee = await _unitOfWork.EmployeeRepository.GetById(employeeToUpdateDto.Id);
 
-            if (employeeToUpdate is null)
+            if (employee is null)
             {
                 throw new UserNotFoundException();
             }
 
+            var employeeToUpdate = _mapper.Map<Employee>(employeeToUpdateDto);
+            
             _unitOfWork.EmployeeRepository.Update(employeeToUpdate);
 
             await _unitOfWork.Commit();
