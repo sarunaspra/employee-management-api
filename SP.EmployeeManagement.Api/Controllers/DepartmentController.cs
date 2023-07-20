@@ -5,29 +5,31 @@ using SP.EmployeeManagement.Dto.Dtos;
 
 namespace SP.EmployeeManagement.Api.Controllers
 {
-    public class EmployeeController : Controller
+    [ApiController]
+    [Route("[controller]")]
+    public class DepartmentController : Controller
     {
-        private readonly IEmployeeService _employeeService;
+        private readonly IDepartmentService _departmentService;
 
-        public EmployeeController(IEmployeeService employeeService)
+        public DepartmentController(IDepartmentService departmentService)
         {
-            _employeeService = employeeService;
+            _departmentService = departmentService;
         }
 
         /// <summary>
-        /// Creates a new employee
+        /// Creates a new department
         /// </summary>
-        /// <param name="employee">Employee request data</param>
-        [HttpPost("[controller]/Create")]
+        /// <param name="department">Department request data</param>
+        [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> CreateEmployeeAsync(EmployeeDto employee)
+        public async Task<IActionResult> CreateDepartmentAsync(DepartmentDto department)
         {
             try
             {
-                await _employeeService.CreateEmployeeAsync(employee);
-                
-                return CreatedAtAction(nameof(GetEmployeeById), new {id = employee.Id}, employee);
+                await _departmentService.CreateDepartmentAsync(department);
+
+                return CreatedAtAction(nameof(GetDepartmentById), new { id = department.Id }, department);
             }
             catch (Exception)
             {
@@ -36,18 +38,18 @@ namespace SP.EmployeeManagement.Api.Controllers
         }
 
         /// <summary>
-        /// Deletes an employee
+        /// Deletes a department
         /// </summary>
-        /// <param name="employeeId">Employee id</param>
-        [HttpDelete("[controller]/Delete")]
+        /// <param name="departmentId">Department id</param>
+        [HttpDelete]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> DeleteEmployeeAsync(int employeeId)
+        public async Task<IActionResult> DeleteDepartmentAsync(int departmentId)
         {
             try
             {
-                await _employeeService.DeleteEmployeeAsync(employeeId);
+                await _departmentService.DeleteDepartmentAsync(departmentId);
                 return NoContent();
             }
             catch (UserNotFoundException)
@@ -61,18 +63,19 @@ namespace SP.EmployeeManagement.Api.Controllers
         }
 
         /// <summary>
-        /// Returns one employee by id
+        /// Returns one department by id
         /// </summary>
-        /// <param name="id">Employee id</param>
-        [HttpGet("[controller]/{id:int}")]
-        [ProducesResponseType(typeof(EmployeeDto), StatusCodes.Status200OK)]
+        /// <param name="id">Department id</param>
+        [HttpGet]
+        [Route("/{id:int}")]
+        [ProducesResponseType(typeof(DepartmentDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetEmployeeById(int id)
+        public async Task<IActionResult> GetDepartmentById(int id)
         {
             try
             {
-                return Ok(await _employeeService.GetEmployeeByIdAsync(id));
+                return Ok(await _departmentService.GetDepartmentByIdAsync(id));
             }
             catch (UserNotFoundException)
             {
@@ -85,16 +88,17 @@ namespace SP.EmployeeManagement.Api.Controllers
         }
 
         /// <summary>
-        /// Returns all employees
+        /// Returns all departments
         /// </summary>
-        [HttpGet("[controller]/GetAll")]
-        [ProducesResponseType(typeof(List<EmployeeDto>), StatusCodes.Status200OK)]
+        [HttpGet]
+        [Route("/GetAll")]
+        [ProducesResponseType(typeof(List<DepartmentDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetEmployeesAsync()
+        public async Task<IActionResult> GetDepartmentsAsync()
         {
             try
             {
-                return Ok(await _employeeService.GetEmployeesAsync());
+                return Ok(await _departmentService.GetDepartmentsAsync());
             }
             catch (Exception)
             {
@@ -103,18 +107,18 @@ namespace SP.EmployeeManagement.Api.Controllers
         }
 
         /// <summary>
-        /// Updates data of already existing employee
+        /// Updates data of already existing department
         /// </summary>
-        /// <param name="employee">Employee request data</param>
-        [HttpPut("[controller]/Update")]
+        /// <param name="department">Department request data</param>
+        [HttpPut]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> UpdateEmployeeAsync(EmployeeDto employee)
+        public async Task<IActionResult> UpdateDepartmentAsync(DepartmentDto department)
         {
             try
             {
-                await _employeeService.UpdateEmployeeAsync(employee);
+                await _departmentService.UpdateDepartmentAsync(department);
 
                 return Ok();
             }

@@ -6,7 +6,7 @@ namespace SP.EmployeeManagement.BusinessLogic.Services.IServices
     {
         Task CreateEmployeeAsync(EmployeeDto employeeDto);
 
-        Task<List<EmployeeDto>> GetAllEmployeesAsync();
+        Task<List<EmployeeDto>> GetEmployeesAsync();
 
         Task<EmployeeDto> GetEmployeeByIdAsync(int employeeId);
 

@@ -11,6 +11,7 @@ namespace SP.EmployeeManagement.DataAccess
         private EmployeeManagementContext _context;
 
         private EmployeeRepository _employeeRepository;
+        private DepartmentRepository _departmentRepository;
 
         private EmployeeManagementContext Context => _context ??= new EmployeeManagementContext(_options);
 
@@ -27,6 +28,8 @@ namespace SP.EmployeeManagement.DataAccess
 
         public IEmployeeRepository EmployeeRepository => 
             _employeeRepository ??= new EmployeeRepository(Context);
+        public IDepartmentRepository DepartmentRepository =>
+            _departmentRepository ??= new DepartmentRepository(Context);
 
         public async Task Commit()
         {

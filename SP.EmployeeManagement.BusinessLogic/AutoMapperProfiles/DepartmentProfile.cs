@@ -10,6 +10,8 @@ namespace SP.EmployeeManagement.BusinessLogic.AutoMapperProfiles
         {
             CreateMap<Department, DepartmentDto>()
                 .ForMember(dest => dest.EmployeeCount, opt => opt.MapFrom(src => src.Employees.Count));
+            CreateMap<DepartmentDto, Department>()
+                .ForPath(dest => dest.Employees.Count, opt => opt.MapFrom(src => src.EmployeeCount));
         }
     }
 }

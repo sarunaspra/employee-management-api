@@ -40,7 +40,7 @@ namespace SP.EmployeeManagement.BusinessLogic.Services
             await _unitOfWork.Commit();
         }
 
-        public async Task<List<EmployeeDto>> GetAllEmployeesAsync()
+        public async Task<List<EmployeeDto>> GetEmployeesAsync()
         {
             var employeesList = await _unitOfWork.EmployeeRepository.GetAll();
 
@@ -68,9 +68,15 @@ namespace SP.EmployeeManagement.BusinessLogic.Services
                 throw new UserNotFoundException();
             }
 
-            var employeeToUpdate = _mapper.Map<Employee>(employeeToUpdateDto);
+            employee.FirstName = employeeToUpdateDto.FirstName;
+            employee.LastName = employeeToUpdateDto.LastName;
+            employee.Email = employeeToUpdateDto.Email;
+            employee.PhoneNumber = employeeToUpdateDto.PhoneNumber;
+            employee.DepartmentId = employeeToUpdateDto.DepartmentId;
+            employee.PositionId = employeeToUpdateDto.PositionId;
+            employee.Salary = employeeToUpdateDto.Salary;
             
-            _unitOfWork.EmployeeRepository.Update(employeeToUpdate);
+            _unitOfWork.EmployeeRepository.Update(employee);
 
             await _unitOfWork.Commit();
         }
