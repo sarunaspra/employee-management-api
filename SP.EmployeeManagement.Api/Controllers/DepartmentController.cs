@@ -5,8 +5,6 @@ using SP.EmployeeManagement.Dto.Dtos;
 
 namespace SP.EmployeeManagement.Api.Controllers
 {
-    [ApiController]
-    [Route("[controller]")]
     public class DepartmentController : Controller
     {
         private readonly IDepartmentService _departmentService;
@@ -20,7 +18,7 @@ namespace SP.EmployeeManagement.Api.Controllers
         /// Creates a new department
         /// </summary>
         /// <param name="department">Department request data</param>
-        [HttpPost]
+        [HttpPost("[controller]/Create")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> CreateDepartmentAsync(DepartmentDto department)
@@ -41,7 +39,7 @@ namespace SP.EmployeeManagement.Api.Controllers
         /// Deletes a department
         /// </summary>
         /// <param name="departmentId">Department id</param>
-        [HttpDelete]
+        [HttpDelete("[controller]/Delete")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -66,8 +64,7 @@ namespace SP.EmployeeManagement.Api.Controllers
         /// Returns one department by id
         /// </summary>
         /// <param name="id">Department id</param>
-        [HttpGet]
-        [Route("/{id:int}")]
+        [HttpGet("[controller]/{id:int}")]
         [ProducesResponseType(typeof(DepartmentDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -90,8 +87,7 @@ namespace SP.EmployeeManagement.Api.Controllers
         /// <summary>
         /// Returns all departments
         /// </summary>
-        [HttpGet]
-        [Route("/GetAll")]
+        [HttpGet("[controller]/GetAll")]
         [ProducesResponseType(typeof(List<DepartmentDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetDepartmentsAsync()
@@ -110,7 +106,7 @@ namespace SP.EmployeeManagement.Api.Controllers
         /// Updates data of already existing department
         /// </summary>
         /// <param name="department">Department request data</param>
-        [HttpPut]
+        [HttpPut("[controller]/Update")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
