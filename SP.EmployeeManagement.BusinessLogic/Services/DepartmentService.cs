@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.Extensions.Logging;
 using SP.EmployeeManagement.BusinessLogic.Services.IServices;
 using SP.EmployeeManagement.BusinessLogic.Utilities.CustomExceptions;
 using SP.EmployeeManagement.DataAccess.Entities;
@@ -11,16 +12,19 @@ namespace SP.EmployeeManagement.BusinessLogic.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly ILogger<DepartmentService> _logger;
 
-        public DepartmentService(IUnitOfWork unitOfWork, IMapper mapper)
+        public DepartmentService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<DepartmentService> logger)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _logger = logger;
         }
 
         public async Task CreateDepartmentAsync(DepartmentDto departmentDto)
         {
             await _unitOfWork.DepartmentRepository.Add(_mapper.Map<Department>(departmentDto));
+            _logger.LogInformation($"Department - {departmentDto.Name}, was created at {DateTime.Now}");
 
             await _unitOfWork.Commit();
         }
@@ -31,6 +35,7 @@ namespace SP.EmployeeManagement.BusinessLogic.Services
 
             if (departmentToDelete is null)
             {
+                _logger.LogInformation($"Department with id {departmentId} was not found");
                 throw new UserNotFoundException();
             }
 
@@ -41,10 +46,12 @@ namespace SP.EmployeeManagement.BusinessLogic.Services
 
         public async Task<DepartmentDto> GetDepartmentByIdAsync(int departmentId)
         {
+            _logger.LogInformation($"Department with id {departmentId} was requested");
             var departmentToReturn = await _unitOfWork.DepartmentRepository.GetById(departmentId);
 
             if (departmentToReturn is null)
             {
+                _logger.LogInformation($"Department with id {departmentId} was not found");
                 throw new UserNotFoundException();
             }
 
@@ -54,6 +61,7 @@ namespace SP.EmployeeManagement.BusinessLogic.Services
         public async Task<List<DepartmentDto>> GetDepartmentsAsync()
         {
             var departmentsList = await _unitOfWork.DepartmentRepository.GetAll();
+            _logger.LogInformation($"List of {departmentsList.Count()} departments was returned");
 
             return _mapper.Map<List<DepartmentDto>>(departmentsList);
         }
@@ -64,6 +72,7 @@ namespace SP.EmployeeManagement.BusinessLogic.Services
 
             if (department is null)
             {
+                _logger.LogInformation($"Department with id {departmentToUpdateDto.Id} was not found");
                 throw new UserNotFoundException();
             }
 
@@ -71,6 +80,7 @@ namespace SP.EmployeeManagement.BusinessLogic.Services
             department.Description = departmentToUpdateDto.Description;
 
             _unitOfWork.DepartmentRepository.Update(department);
+            _logger.LogInformation($"Information of department {department.Name} (id - {department.Id} was updated");
 
             await _unitOfWork.Commit();
         }
