@@ -24,7 +24,7 @@ namespace SP.EmployeeManagement.BusinessLogic.Services
         public async Task CreateEmployeeAsync(EmployeeDto employeeDto)
         {
             await _unitOfWork.EmployeeRepository.Add(_mapper.Map<Employee>(employeeDto));
-            _logger.LogInformation($"Employee {employeeDto.FirstName} {employeeDto.LastName} was created at {DateTime.Now}");
+            _logger.LogInformation($"Employee {employeeDto.FirstName} {employeeDto.LastName} was created");
 
             await _unitOfWork.Commit();
         }
@@ -85,7 +85,7 @@ namespace SP.EmployeeManagement.BusinessLogic.Services
             employee.Salary = employeeToUpdateDto.Salary;
             
             _unitOfWork.EmployeeRepository.Update(employee);
-            _logger.LogInformation($"Information of employee {employee.FirstName} {employee.LastName} (id - {employee.Id} was updated");
+            _logger.LogInformation($"Information of employee {employee.FirstName} {employee.LastName} (id - {employee.Id}) was updated");
 
             await _unitOfWork.Commit();
         }

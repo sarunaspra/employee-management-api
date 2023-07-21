@@ -24,7 +24,7 @@ namespace SP.EmployeeManagement.BusinessLogic.Services
         public async Task CreatePositionAsync(PositionDto positionDto)
         {
             await _unitOfWork.PositionRepository.Add(_mapper.Map<Position>(positionDto));
-            _logger.LogInformation($"Position {positionDto.Title} was created at {DateTime.Now}");
+            _logger.LogInformation($"Position {positionDto.Title} was created at");
 
             await _unitOfWork.Commit();
         }

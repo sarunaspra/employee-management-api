@@ -24,7 +24,7 @@ namespace SP.EmployeeManagement.BusinessLogic.Services
         public async Task CreateDepartmentAsync(DepartmentDto departmentDto)
         {
             await _unitOfWork.DepartmentRepository.Add(_mapper.Map<Department>(departmentDto));
-            _logger.LogInformation($"Department - {departmentDto.Name}, was created at {DateTime.Now}");
+            _logger.LogInformation($"Department - {departmentDto.Name}, was created");
 
             await _unitOfWork.Commit();
         }
@@ -80,7 +80,7 @@ namespace SP.EmployeeManagement.BusinessLogic.Services
             department.Description = departmentToUpdateDto.Description;
 
             _unitOfWork.DepartmentRepository.Update(department);
-            _logger.LogInformation($"Information of department {department.Name} (id - {department.Id} was updated");
+            _logger.LogInformation($"Information of department {department.Name} (id - {department.Id}) was updated");
 
             await _unitOfWork.Commit();
         }
