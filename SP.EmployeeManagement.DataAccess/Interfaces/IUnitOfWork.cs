@@ -4,6 +4,7 @@
     {
         IEmployeeRepository EmployeeRepository { get; }
         IDepartmentRepository DepartmentRepository { get; }
+        IPositionRepository PositionRepository { get; }
 
         Task Commit();
     }
