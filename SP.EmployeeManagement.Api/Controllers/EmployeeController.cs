@@ -6,6 +6,12 @@ using SP.EmployeeManagement.Dto.Dtos;
 
 namespace SP.EmployeeManagement.Api.Controllers
 {
+    /// <summary>
+    /// Employee Controller
+    /// </summary>
+    [ApiVersion("1.0")]
+    [Route("v{version:apiVersion}/[controller]")]
+    [ApiController]
     public class EmployeeController : Controller
     {
         private readonly IEmployeeService _employeeService;
@@ -21,7 +27,7 @@ namespace SP.EmployeeManagement.Api.Controllers
         /// Creates a new employee
         /// </summary>
         /// <param name="employee">Employee request data</param>
-        [HttpPost("[controller]/Create")]
+        [HttpPost("create")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -52,7 +58,7 @@ namespace SP.EmployeeManagement.Api.Controllers
         /// Deletes an employee
         /// </summary>
         /// <param name="employeeId">Employee id</param>
-        [HttpDelete("[controller]/Delete")]
+        [HttpDelete("delete")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -77,7 +83,7 @@ namespace SP.EmployeeManagement.Api.Controllers
         /// Returns one employee by id
         /// </summary>
         /// <param name="id">Employee id</param>
-        [HttpGet("[controller]/{id:int}")]
+        [HttpGet("{id:int}")]
         [ProducesResponseType(typeof(EmployeeDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -100,7 +106,7 @@ namespace SP.EmployeeManagement.Api.Controllers
         /// <summary>
         /// Returns all employees
         /// </summary>
-        [HttpGet("[controller]/GetAll")]
+        [HttpGet("getAll")]
         [ProducesResponseType(typeof(List<EmployeeDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetEmployeesAsync()
@@ -119,7 +125,7 @@ namespace SP.EmployeeManagement.Api.Controllers
         /// Updates data of already existing employee
         /// </summary>
         /// <param name="employee">Employee request data</param>
-        [HttpPut("[controller]/Update")]
+        [HttpPut("update")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
