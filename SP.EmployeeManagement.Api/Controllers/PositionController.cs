@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using SP.EmployeeManagement.BusinessLogic.Services;
+﻿using FluentValidation;
+using Microsoft.AspNetCore.Mvc;
 using SP.EmployeeManagement.BusinessLogic.Services.IServices;
 using SP.EmployeeManagement.BusinessLogic.Utilities.CustomExceptions;
 using SP.EmployeeManagement.Dto.Dtos;
@@ -9,10 +9,12 @@ namespace SP.EmployeeManagement.Api.Controllers
     public class PositionController : Controller
     {
         private readonly IPositionService _positionService;
+        private readonly IValidator<PositionDto> _positionDtoValidator;
 
-        public PositionController(IPositionService positionService)
+        public PositionController(IPositionService positionService, IValidator<PositionDto> positionDtoValidator)
         {
             _positionService = positionService;
+            _positionDtoValidator = positionDtoValidator;
         }
 
         /// <summary>
@@ -21,14 +23,24 @@ namespace SP.EmployeeManagement.Api.Controllers
         /// <param name="position">Position request data</param>
         [HttpPost("[controller]/Create")]
         [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> CreatePositionAsync(PositionDto position)
         {
             try
             {
-                await _positionService.CreatePositionAsync(position);
+                var validationResult = await _positionDtoValidator.ValidateAsync(position);
 
-                return CreatedAtAction(nameof(GetPositionById), new { id = position.Id }, position);
+                if (validationResult.IsValid)
+                {
+                    await _positionService.CreatePositionAsync(position);
+
+                    return CreatedAtAction(nameof(GetPositionById), new { id = position.Id }, position);
+                }
+                else
+                {
+                    return BadRequest(validationResult.Errors);
+                }
             }
             catch (Exception)
             {
@@ -109,15 +121,25 @@ namespace SP.EmployeeManagement.Api.Controllers
         /// <param name="position">Position request data</param>
         [HttpPut("[controller]/Update")]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> UpdatePositionAsync(PositionDto position)
         {
             try
             {
-                await _positionService.UpdatePositionAsync(position);
+                var validationResult = await _positionDtoValidator.ValidateAsync(position);
 
-                return Ok();
+                if (validationResult.IsValid)
+                {
+                    await _positionService.UpdatePositionAsync(position);
+
+                    return Ok();
+                }
+                else
+                {
+                    return BadRequest(validationResult);
+                }
             }
             catch (UserNotFoundException)
             {

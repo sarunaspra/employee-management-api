@@ -1,7 +1,8 @@
-using Microsoft.EntityFrameworkCore;
+using FluentValidation;
 using SP.EmployeeManagement.BusinessLogic.AutoMapperProfiles;
 using SP.EmployeeManagement.BusinessLogic.Services;
 using SP.EmployeeManagement.BusinessLogic.Services.IServices;
+using SP.EmployeeManagement.BusinessLogic.Validators;
 using SP.EmployeeManagement.DataAccess;
 using SP.EmployeeManagement.DataAccess.Interfaces;
 
@@ -11,6 +12,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddAutoMapper(typeof(EmployeeProfile),
     typeof(DepartmentProfile), 
     typeof(PositionProfile));
+
+builder.Services.AddValidatorsFromAssemblyContaining<EmployeeDtoValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<DepartmentDtoValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<PositionDtoValidator>();
 
 builder.Services.Configure<UnitOfWorkOptions>(
     builder.Configuration.GetSection(nameof(UnitOfWorkOptions)));

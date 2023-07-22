@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using FluentValidation;
+using Microsoft.AspNetCore.Mvc;
 using SP.EmployeeManagement.BusinessLogic.Services.IServices;
 using SP.EmployeeManagement.BusinessLogic.Utilities.CustomExceptions;
 using SP.EmployeeManagement.Dto.Dtos;
@@ -8,10 +9,12 @@ namespace SP.EmployeeManagement.Api.Controllers
     public class EmployeeController : Controller
     {
         private readonly IEmployeeService _employeeService;
+        private readonly IValidator<EmployeeDto> _employeeDtoValidator;
 
-        public EmployeeController(IEmployeeService employeeService)
+        public EmployeeController(IEmployeeService employeeService, IValidator<EmployeeDto> employeeDtoValidator)
         {
             _employeeService = employeeService;
+            _employeeDtoValidator = employeeDtoValidator;
         }
 
         /// <summary>
@@ -20,14 +23,24 @@ namespace SP.EmployeeManagement.Api.Controllers
         /// <param name="employee">Employee request data</param>
         [HttpPost("[controller]/Create")]
         [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> CreateEmployeeAsync(EmployeeDto employee)
         {
             try
             {
-                await _employeeService.CreateEmployeeAsync(employee);
+                var validationResult = await _employeeDtoValidator.ValidateAsync(employee);
+
+                if (validationResult.IsValid) 
+                { 
+                    await _employeeService.CreateEmployeeAsync(employee);
                 
-                return CreatedAtAction(nameof(GetEmployeeById), new {id = employee.Id}, employee);
+                    return CreatedAtAction(nameof(GetEmployeeById), new {id = employee.Id}, employee);
+                }
+                else
+                {
+                    return BadRequest(validationResult.Errors);
+                }
             }
             catch (Exception)
             {
@@ -108,15 +121,25 @@ namespace SP.EmployeeManagement.Api.Controllers
         /// <param name="employee">Employee request data</param>
         [HttpPut("[controller]/Update")]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> UpdateEmployeeAsync(EmployeeDto employee)
         {
             try
             {
-                await _employeeService.UpdateEmployeeAsync(employee);
+                var validationResult = await _employeeDtoValidator.ValidateAsync(employee);
 
-                return Ok();
+                if (validationResult.IsValid)
+                {
+                    await _employeeService.UpdateEmployeeAsync(employee);
+
+                    return Ok();
+                }
+                else
+                {
+                    return BadRequest(validationResult.Errors);
+                }
             }
             catch (UserNotFoundException)
             {
