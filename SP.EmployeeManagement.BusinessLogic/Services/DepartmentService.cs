@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using FluentValidation;
 using Microsoft.Extensions.Logging;
 using SP.EmployeeManagement.BusinessLogic.Services.IServices;
 using SP.EmployeeManagement.BusinessLogic.Utilities.CustomExceptions;
@@ -13,20 +14,31 @@ namespace SP.EmployeeManagement.BusinessLogic.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly ILogger<DepartmentService> _logger;
+        private readonly IValidator<DepartmentDto> _departmentDtoValidator;
 
-        public DepartmentService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<DepartmentService> logger)
+        public DepartmentService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<DepartmentService> logger, IValidator<DepartmentDto> departmentDto)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _logger = logger;
+            _departmentDtoValidator = departmentDto;
         }
 
         public async Task CreateDepartmentAsync(DepartmentDto departmentDto)
         {
-            await _unitOfWork.DepartmentRepository.Add(_mapper.Map<Department>(departmentDto));
-            _logger.LogInformation($"Department - {departmentDto.Name}, was created");
+            var validationResult = await _departmentDtoValidator.ValidateAsync(departmentDto);
 
-            await _unitOfWork.Commit();
+            if (validationResult.IsValid)
+            {
+                await _unitOfWork.DepartmentRepository.Add(_mapper.Map<Department>(departmentDto));
+                _logger.LogInformation($"Department - {departmentDto.Name}, was created");
+
+                await _unitOfWork.Commit();
+            }
+            else
+            {
+                throw new InputValidationException(validationResult.Errors.ToList());
+            }
         }
 
         public async Task DeleteDepartmentAsync(int departmentId)
@@ -76,13 +88,22 @@ namespace SP.EmployeeManagement.BusinessLogic.Services
                 throw new UserNotFoundException();
             }
 
-            department.Name = departmentToUpdateDto.Name;
-            department.Description = departmentToUpdateDto.Description;
+            var validationResult = await _departmentDtoValidator.ValidateAsync(departmentToUpdateDto);
 
-            _unitOfWork.DepartmentRepository.Update(department);
-            _logger.LogInformation($"Information of department {department.Name} (id - {department.Id}) was updated");
+            if (validationResult.IsValid)
+            {
+                department.Name = departmentToUpdateDto.Name;
+                department.Description = departmentToUpdateDto.Description;
 
-            await _unitOfWork.Commit();
+                _unitOfWork.DepartmentRepository.Update(department);
+                _logger.LogInformation($"Information of department {department.Name} (id - {department.Id}) was updated");
+
+                await _unitOfWork.Commit();
+            }
+            else
+            {
+                throw new InputValidationException(validationResult.Errors.ToList());
+            }
         }
     }
 }

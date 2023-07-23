@@ -7,7 +7,7 @@ using SP.EmployeeManagement.Dto.Dtos;
 namespace SP.EmployeeManagement.Api.Controllers
 {
     /// <summary>
-    /// Employee Controller
+    /// Employee Controller v1
     /// </summary>
     [ApiVersion("1.0")]
     [Route("v{version:apiVersion}/[controller]")]
@@ -15,12 +15,10 @@ namespace SP.EmployeeManagement.Api.Controllers
     public class EmployeeController : Controller
     {
         private readonly IEmployeeService _employeeService;
-        private readonly IValidator<EmployeeDto> _employeeDtoValidator;
 
-        public EmployeeController(IEmployeeService employeeService, IValidator<EmployeeDto> employeeDtoValidator)
+        public EmployeeController(IEmployeeService employeeService)
         {
             _employeeService = employeeService;
-            _employeeDtoValidator = employeeDtoValidator;
         }
 
         /// <summary>
@@ -35,18 +33,13 @@ namespace SP.EmployeeManagement.Api.Controllers
         {
             try
             {
-                var validationResult = await _employeeDtoValidator.ValidateAsync(employee);
-
-                if (validationResult.IsValid) 
-                { 
-                    await _employeeService.CreateEmployeeAsync(employee);
+                await _employeeService.CreateEmployeeAsync(employee);
                 
-                    return CreatedAtAction(nameof(GetEmployeeById), new {id = employee.Id}, employee);
-                }
-                else
-                {
-                    return BadRequest(validationResult.Errors);
-                }
+                return CreatedAtAction(nameof(GetEmployeeById), new {id = employee.Id}, employee);
+            }
+            catch (InputValidationException e)
+            {
+                return BadRequest(e.Errors);
             }
             catch (Exception)
             {
@@ -134,22 +127,17 @@ namespace SP.EmployeeManagement.Api.Controllers
         {
             try
             {
-                var validationResult = await _employeeDtoValidator.ValidateAsync(employee);
+                await _employeeService.UpdateEmployeeAsync(employee);
 
-                if (validationResult.IsValid)
-                {
-                    await _employeeService.UpdateEmployeeAsync(employee);
-
-                    return Ok();
-                }
-                else
-                {
-                    return BadRequest(validationResult.Errors);
-                }
+                return Ok();
             }
             catch (UserNotFoundException)
             {
                 return NotFound();
+            }
+            catch (InputValidationException e)
+            {
+                return BadRequest(e.Errors);
             }
             catch (Exception)
             {

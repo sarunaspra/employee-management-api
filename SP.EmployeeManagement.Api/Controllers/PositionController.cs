@@ -7,7 +7,7 @@ using SP.EmployeeManagement.Dto.Dtos;
 namespace SP.EmployeeManagement.Api.Controllers
 {
     /// <summary>
-    /// Position Controller
+    /// Position Controller v1
     /// </summary>
     [ApiVersion("1.0")]
     [Route("v{version:apiVersion}/[controller]")]
@@ -35,18 +35,13 @@ namespace SP.EmployeeManagement.Api.Controllers
         {
             try
             {
-                var validationResult = await _positionDtoValidator.ValidateAsync(position);
+                await _positionService.CreatePositionAsync(position);
 
-                if (validationResult.IsValid)
-                {
-                    await _positionService.CreatePositionAsync(position);
-
-                    return CreatedAtAction(nameof(GetPositionById), new { id = position.Id }, position);
-                }
-                else
-                {
-                    return BadRequest(validationResult.Errors);
-                }
+                return CreatedAtAction(nameof(GetPositionById), new { id = position.Id }, position);
+            }
+            catch (InputValidationException e)
+            {
+                return BadRequest(e.Errors);
             }
             catch (Exception)
             {
@@ -134,22 +129,17 @@ namespace SP.EmployeeManagement.Api.Controllers
         {
             try
             {
-                var validationResult = await _positionDtoValidator.ValidateAsync(position);
+                await _positionService.UpdatePositionAsync(position);
 
-                if (validationResult.IsValid)
-                {
-                    await _positionService.UpdatePositionAsync(position);
-
-                    return Ok();
-                }
-                else
-                {
-                    return BadRequest(validationResult);
-                }
+                return Ok();
             }
             catch (UserNotFoundException)
             {
                 return NotFound();
+            }
+            catch (InputValidationException e)
+            {
+                return BadRequest(e.Errors);
             }
             catch (Exception)
             {

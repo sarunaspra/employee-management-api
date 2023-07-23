@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using FluentValidation;
 using Microsoft.Extensions.Logging;
 using SP.EmployeeManagement.BusinessLogic.Services.IServices;
 using SP.EmployeeManagement.BusinessLogic.Utilities.CustomExceptions;
@@ -13,20 +14,31 @@ namespace SP.EmployeeManagement.BusinessLogic.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly ILogger<EmployeeService> _logger;
+        private readonly IValidator<EmployeeDto> _employeeDtoValidator;
 
-        public EmployeeService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<EmployeeService> logger)
+        public EmployeeService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<EmployeeService> logger, IValidator<EmployeeDto> employeeDtoValidator)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _logger = logger;
+            _employeeDtoValidator = employeeDtoValidator;
         }
 
         public async Task CreateEmployeeAsync(EmployeeDto employeeDto)
         {
-            await _unitOfWork.EmployeeRepository.Add(_mapper.Map<Employee>(employeeDto));
-            _logger.LogInformation($"Employee {employeeDto.FirstName} {employeeDto.LastName} was created");
+            var validationResult = await _employeeDtoValidator.ValidateAsync(employeeDto);
 
-            await _unitOfWork.Commit();
+            if (validationResult.IsValid)
+            {
+                await _unitOfWork.EmployeeRepository.Add(_mapper.Map<Employee>(employeeDto));
+                _logger.LogInformation($"Employee {employeeDto.FirstName} {employeeDto.LastName} was created");
+
+                await _unitOfWork.Commit();
+            }
+            else
+            {
+                throw new InputValidationException(validationResult.Errors.ToList());
+            }
         }
 
         public async Task DeleteEmployeeAsync(int employeeId)
@@ -76,18 +88,27 @@ namespace SP.EmployeeManagement.BusinessLogic.Services
                 throw new UserNotFoundException();
             }
 
-            employee.FirstName = employeeToUpdateDto.FirstName;
-            employee.LastName = employeeToUpdateDto.LastName;
-            employee.Email = employeeToUpdateDto.Email;
-            employee.PhoneNumber = employeeToUpdateDto.PhoneNumber;
-            employee.DepartmentId = employeeToUpdateDto.DepartmentId;
-            employee.PositionId = employeeToUpdateDto.PositionId;
-            employee.Salary = employeeToUpdateDto.Salary;
-            
-            _unitOfWork.EmployeeRepository.Update(employee);
-            _logger.LogInformation($"Information of employee {employee.FirstName} {employee.LastName} (id - {employee.Id}) was updated");
+            var validationResult = await _employeeDtoValidator.ValidateAsync(employeeToUpdateDto);
 
-            await _unitOfWork.Commit();
+            if (validationResult.IsValid)
+            {
+                employee.FirstName = employeeToUpdateDto.FirstName;
+                employee.LastName = employeeToUpdateDto.LastName;
+                employee.Email = employeeToUpdateDto.Email;
+                employee.PhoneNumber = employeeToUpdateDto.PhoneNumber;
+                employee.DepartmentId = employeeToUpdateDto.DepartmentId;
+                employee.PositionId = employeeToUpdateDto.PositionId;
+                employee.Salary = employeeToUpdateDto.Salary;
+            
+                _unitOfWork.EmployeeRepository.Update(employee);
+                _logger.LogInformation($"Information of employee {employee.FirstName} {employee.LastName} (id - {employee.Id}) was updated");
+
+                await _unitOfWork.Commit();
+            }
+            else
+            {
+                throw new InputValidationException(validationResult.Errors.ToList());
+            }
         }
     }
 }

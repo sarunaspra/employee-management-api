@@ -7,7 +7,7 @@ using SP.EmployeeManagement.Dto.Dtos;
 namespace SP.EmployeeManagement.Api.Controllers
 {
     /// <summary>
-    /// Department Controller
+    /// Department Controller v1
     /// </summary>
     [ApiVersion("1.0")]
     [Route("v{version:apiVersion}/[controller]")]
@@ -35,18 +35,13 @@ namespace SP.EmployeeManagement.Api.Controllers
         {
             try
             {
-                var validationResult = await _departmentDtoValidator.ValidateAsync(department);
+                await _departmentService.CreateDepartmentAsync(department);
 
-                if (validationResult.IsValid)
-                {
-                    await _departmentService.CreateDepartmentAsync(department);
-
-                    return CreatedAtAction(nameof(GetDepartmentById), new { id = department.Id }, department);
-                }
-                else
-                {
-                    return BadRequest(validationResult.Errors);
-                }
+                return CreatedAtAction(nameof(GetDepartmentById), new { id = department.Id }, department);
+            }
+            catch(InputValidationException e)
+            {
+                return BadRequest(e.Errors);
             }
             catch (Exception)
             {
@@ -134,22 +129,17 @@ namespace SP.EmployeeManagement.Api.Controllers
         {
             try
             {
-                var validationResult = await _departmentDtoValidator.ValidateAsync(department);
+                await _departmentService.UpdateDepartmentAsync(department);
 
-                if (validationResult.IsValid)
-                {
-                    await _departmentService.UpdateDepartmentAsync(department);
-
-                    return Ok();
-                }
-                else
-                {
-                    return BadRequest(validationResult.Errors);
-                }
+                return Ok();
             }
             catch (UserNotFoundException)
             {
                 return NotFound();
+            }
+            catch (InputValidationException e)
+            {
+                return BadRequest(e.Errors);
             }
             catch (Exception)
             {

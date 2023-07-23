@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using FluentValidation;
 using Microsoft.Extensions.Logging;
 using SP.EmployeeManagement.BusinessLogic.Services.IServices;
 using SP.EmployeeManagement.BusinessLogic.Utilities.CustomExceptions;
@@ -13,20 +14,31 @@ namespace SP.EmployeeManagement.BusinessLogic.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly ILogger<PositionService> _logger;
+        private readonly IValidator<PositionDto> _positionDtoValidator;
 
-        public PositionService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<PositionService> logger)
+        public PositionService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<PositionService> logger, IValidator<PositionDto> positionDtoValidator)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _logger = logger;
+            _positionDtoValidator = positionDtoValidator;
         }
 
         public async Task CreatePositionAsync(PositionDto positionDto)
         {
-            await _unitOfWork.PositionRepository.Add(_mapper.Map<Position>(positionDto));
-            _logger.LogInformation($"Position {positionDto.Title} was created at");
+            var validationResult = await _positionDtoValidator.ValidateAsync(positionDto);
 
-            await _unitOfWork.Commit();
+            if (validationResult.IsValid)
+            {
+                await _unitOfWork.PositionRepository.Add(_mapper.Map<Position>(positionDto));
+                _logger.LogInformation($"Position {positionDto.Title} was created at");
+
+                await _unitOfWork.Commit();
+            }
+            else
+            {
+                throw new InputValidationException(validationResult.Errors.ToList());
+            }
         }
 
         public async Task DeletePositionAsync(int positionId)
@@ -76,13 +88,22 @@ namespace SP.EmployeeManagement.BusinessLogic.Services
                 throw new UserNotFoundException();
             }
 
-            position.Title = positionToUpdateDto.Title;
-            position.Description = positionToUpdateDto.Description;
+            var validationResult = await _positionDtoValidator.ValidateAsync(positionToUpdateDto);
 
-            _unitOfWork.PositionRepository.Update(position);
-            _logger.LogInformation($"Information of position {position.Title} (id - {position.Id}) was updated");
+            if (validationResult.IsValid)
+            {
+                position.Title = positionToUpdateDto.Title;
+                position.Description = positionToUpdateDto.Description;
 
-            await _unitOfWork.Commit();
+                _unitOfWork.PositionRepository.Update(position);
+                _logger.LogInformation($"Information of position {position.Title} (id - {position.Id}) was updated");
+
+                await _unitOfWork.Commit();
+            }
+            else
+            {
+                throw new InputValidationException(validationResult.Errors.ToList());
+            }
         }
     }
 }
