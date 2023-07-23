@@ -15,12 +15,10 @@ namespace SP.EmployeeManagement.Api.Controllers
     public class DepartmentController : Controller
     {
         private readonly IDepartmentService _departmentService;
-        private readonly IValidator<DepartmentDto> _departmentDtoValidator;
 
-        public DepartmentController(IDepartmentService departmentService, IValidator<DepartmentDto> departmentDtoValidator)
+        public DepartmentController(IDepartmentService departmentService)
         {
             _departmentService = departmentService;
-            _departmentDtoValidator = departmentDtoValidator;
         }
 
         /// <summary>

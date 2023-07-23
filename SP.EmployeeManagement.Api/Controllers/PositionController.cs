@@ -15,12 +15,10 @@ namespace SP.EmployeeManagement.Api.Controllers
     public class PositionController : Controller
     {
         private readonly IPositionService _positionService;
-        private readonly IValidator<PositionDto> _positionDtoValidator;
 
-        public PositionController(IPositionService positionService, IValidator<PositionDto> positionDtoValidator)
+        public PositionController(IPositionService positionService)
         {
             _positionService = positionService;
-            _positionDtoValidator = positionDtoValidator;
         }
 
         /// <summary>
