@@ -2,7 +2,6 @@
 using Microsoft.Extensions.Logging;
 using Moq;
 using SP.EmployeeManagement.BusinessLogic.Services;
-using SP.EmployeeManagement.BusinessLogic.Services.IServices;
 using SP.EmployeeManagement.BusinessLogic.Utilities.CustomExceptions;
 using SP.EmployeeManagement.BusinessLogic.Validators;
 using SP.EmployeeManagement.DataAccess.Entities;
