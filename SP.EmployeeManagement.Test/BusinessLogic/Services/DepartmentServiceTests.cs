@@ -2,12 +2,10 @@
 using Microsoft.Extensions.Logging;
 using Moq;
 using SP.EmployeeManagement.BusinessLogic.Services;
-using SP.EmployeeManagement.BusinessLogic.Services.IServices;
 using SP.EmployeeManagement.BusinessLogic.Utilities.CustomExceptions;
 using SP.EmployeeManagement.BusinessLogic.Validators;
 using SP.EmployeeManagement.DataAccess.Entities;
 using SP.EmployeeManagement.DataAccess.Interfaces;
-using SP.EmployeeManagement.DataAccess.Repositories;
 using SP.EmployeeManagement.Dto.Dtos;
 using Xunit;
 
