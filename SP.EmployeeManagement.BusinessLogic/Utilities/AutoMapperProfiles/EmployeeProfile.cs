@@ -2,7 +2,7 @@
 using SP.EmployeeManagement.DataAccess.Entities;
 using SP.EmployeeManagement.Dto.Dtos;
 
-namespace SP.EmployeeManagement.BusinessLogic.AutoMapperProfiles
+namespace SP.EmployeeManagement.BusinessLogic.Utilities.AutoMapperProfiles
 {
     public class EmployeeProfile : Profile
     {

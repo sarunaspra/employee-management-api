@@ -1,8 +1,8 @@
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
-using SP.EmployeeManagement.BusinessLogic.AutoMapperProfiles;
 using SP.EmployeeManagement.BusinessLogic.Services;
 using SP.EmployeeManagement.BusinessLogic.Services.IServices;
+using SP.EmployeeManagement.BusinessLogic.Utilities.AutoMapperProfiles;
 using SP.EmployeeManagement.BusinessLogic.Validators;
 using SP.EmployeeManagement.DataAccess;
 using SP.EmployeeManagement.DataAccess.Interfaces;

@@ -2,15 +2,15 @@
 using SP.EmployeeManagement.DataAccess.Entities;
 using SP.EmployeeManagement.Dto.Dtos;
 
-namespace SP.EmployeeManagement.BusinessLogic.AutoMapperProfiles
+namespace SP.EmployeeManagement.BusinessLogic.Utilities.AutoMapperProfiles
 {
-    public class DepartmentProfile : Profile
+    public class PositionProfile : Profile
     {
-        public DepartmentProfile()
+        public PositionProfile()
         {
-            CreateMap<Department, DepartmentDto>()
+            CreateMap<Position, PositionDto>()
                 .ForMember(dest => dest.EmployeeCount, opt => opt.MapFrom(src => src.Employees.Count));
-            CreateMap<DepartmentDto, Department>()
+            CreateMap<PositionDto, Position>()
                 .ForPath(dest => dest.Employees.Count, opt => opt.MapFrom(src => src.EmployeeCount));
         }
     }
