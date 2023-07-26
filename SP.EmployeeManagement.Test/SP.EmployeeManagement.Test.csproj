@@ -28,8 +28,4 @@
     <ProjectReference Include="..\SP.EmployeeManagement.BusinessLogic\SP.EmployeeManagement.BusinessLogic.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Api\Controllers\" />
-  </ItemGroup>
-
 </Project>
